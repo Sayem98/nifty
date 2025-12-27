@@ -116,7 +116,7 @@ export const BookFetcher = () => {
         // console.log(bookDetails?.contractAddress)
         //@ts-ignore
         const contract = new ethers.Contract(
-          bookDetails?.contractAddress,
+          bookDetails?.contractAddress || "",
           abi,
           signer
         );
@@ -139,7 +139,7 @@ export const BookFetcher = () => {
 
       //@ts-ignore
       const contract = new ethers.Contract(
-        bookDetails?.contractAddress,
+        bookDetails?.contractAddress || "",
         abi,
         provider
       );
@@ -195,7 +195,7 @@ export const BookFetcher = () => {
       if (txn && session.role != "ANONYMOUS") {
         //@ts-ignore
         await axios.patch("/api/book/updateMinted/" + pathname.split("/")[2], {
-          minted: bookDetails?.minted + amount,
+          minted: bookDetails ? bookDetails.minted! + amount : 0,
         });
         await axios
           .post("/api/transaction/create", {
@@ -219,7 +219,7 @@ export const BookFetcher = () => {
       if (txn && session.role == "ANONYMOUS") {
         //@ts-ignore
         await axios.patch("/api/book/updateMinted/" + pathname.split("/")[2], {
-          minted: bookDetails?.minted + amount,
+          minted: bookDetails?.minted! + amount,
         });
         const res = await axios
           .post("/api/user/create", {
@@ -903,7 +903,7 @@ export const BookFetcher = () => {
                 {/* @ts-ignore */}
                 <button
                   disabled={
-                    (bookDetails?.maxMint > 0 &&
+                    (bookDetails?.maxMint! > 0 &&
                       bookDetails?.maxMint == bookDetails?.minted) ||
                     bookDetails?.isPaused
                   }
@@ -917,12 +917,12 @@ export const BookFetcher = () => {
                       Paused <FaPause />
                     </h2>
                   )}
-                  {bookDetails?.maxMint > 0 &&
-                    bookDetails?.minted < bookDetails?.maxMint &&
+                  {bookDetails?.maxMint! > 0 &&
+                    bookDetails?.minted! < bookDetails?.maxMint! &&
                     !bookDetails?.isPaused &&
                     "Mint"}{" "}
-                  {bookDetails?.maxMint > 0 &&
-                    bookDetails?.minted >= bookDetails?.maxMint &&
+                  {bookDetails?.maxMint! > 0 &&
+                    bookDetails?.minted! >= bookDetails?.maxMint! &&
                     "Minted Out!"}{" "}
                   {bookDetails?.maxMint == 0 &&
                     !bookDetails?.isPaused &&
