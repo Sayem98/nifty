@@ -13,7 +13,7 @@ import { MdLogout, MdOutlineDashboard } from "react-icons/md";
 import { FaMoon, FaPenNib, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import { Search } from "../Global/Search";
 import { LuSun } from "react-icons/lu";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { WalletConnectRegister } from "../buttons/WalletConnectRegister";
 import { initializeTheme, toggleDarkMode } from "@/toggleDarkMode";
 import { IoLogOut } from "react-icons/io5";
@@ -26,6 +26,7 @@ const Navbar = () => {
 
   const [walletNotAvailable, setWalletNotAvailable] = useState(false);
   const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const [bringModal, setBringModal] = useState<boolean>(false);
   const [bringSearchBar, setBringSearchBar] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
@@ -68,6 +69,7 @@ const Navbar = () => {
     if (isSigningOut) return;
     try {
       setIsSigningOut(true);
+      disconnect();
       setBringModal(false);
       setIsOpen(false);
       setUser(null);
