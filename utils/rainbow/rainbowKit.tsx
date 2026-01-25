@@ -1,9 +1,10 @@
 "use client";
 import "@rainbow-me/rainbowkit/styles.css";
-import { AvatarComponent } from "@rainbow-me/rainbowkit";
+// import { AvatarComponent } from "@rainbow-me/rainbowkit"; // Unused in this snippet
 
+import React, { useEffect } from "react";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, useAccount, useSwitchChain } from "wagmi";
 import { base } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
@@ -17,21 +18,45 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
 });
 
 const config = getDefaultConfig({
-  appName: "My RainbowKit App",
+  appName: "Nifty Tales", // Updated to match your SIWE statement
   projectId: "5d10af3027c340310f3a3da64cbcedac",
-  chains: [base],
-  ssr: true, // If your dApp uses server side rendering (SSR)
+  chains: [base], // Only allowing Base
+  ssr: true,
 });
 
 const queryClient = new QueryClient();
+
+// --- 1. Create a component to enforce the network ---
+const NetworkWatcher = () => {
+  const { chainId, isConnected } = useAccount();
+  const { switchChain } = useSwitchChain();
+
+  useEffect(() => {
+    // If connected, and the current chain is NOT Base (8453)
+    if (isConnected && chainId && chainId !== base.id) {
+      console.log("Wrong network detected. Attempting to switch to Base...");
+      switchChain({ chainId: base.id });
+    }
+  }, [chainId, isConnected, switchChain]);
+
+  return null; // This component renders nothing
+};
 
 const Rainbow = ({ children }: any) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {/* <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}> */}
-        <RainbowKitProvider coolMode>{children}</RainbowKitProvider>
-        {/* </RainbowKitSiweNextAuthProvider> */}
+        <RainbowKitSiweNextAuthProvider
+          getSiweMessageOptions={getSiweMessageOptions}
+        >
+          {/* 2. Set initialChain to base. 
+             This ensures RainbowKit prioritizes Base when connecting.
+          */}
+          <RainbowKitProvider coolMode initialChain={base}>
+            <NetworkWatcher />
+            {children}
+          </RainbowKitProvider>
+        </RainbowKitSiweNextAuthProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

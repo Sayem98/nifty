@@ -6,11 +6,11 @@ import { logo } from "@/assets/assets";
 import logo_night from "@/assets/logo_night.png";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut, signIn } from "next-auth/react";
-import { IoIosMenu, IoIosSettings } from "react-icons/io";
+// import { IoIosMenu, IoIosSettings } from "react-icons/io"; // Unused imports
 import { useGlobalContext } from "@/context/MainContext";
 import { WalletConnectButton } from "../buttons/WalletConnectButton";
-import { MdLogout, MdOutlineDashboard } from "react-icons/md";
-import { FaMoon, FaPenNib, FaSearch, FaSignOutAlt } from "react-icons/fa";
+import { MdOutlineDashboard } from "react-icons/md";
+import { FaMoon, FaPenNib, FaSearch } from "react-icons/fa";
 import { Search } from "../Global/Search";
 import { LuSun } from "react-icons/lu";
 import { useAccount, useDisconnect } from "wagmi";
@@ -24,7 +24,7 @@ const Navbar = () => {
   const { user, getUser, night, setNight, setUser } = useGlobalContext();
   const { data: session, status } = useSession();
 
-  const [walletNotAvailable, setWalletNotAvailable] = useState(false);
+  // Removed unused 'walletNotAvailable' logic that was hiding the button
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const [bringModal, setBringModal] = useState<boolean>(false);
@@ -38,7 +38,6 @@ const Navbar = () => {
   // --- AUTO SIGN-IN LOGIC ---
   useEffect(() => {
     const handleAutoSignIn = async () => {
-      // If wallet is connected but NextAuth session doesn't exist yet
       if (
         isConnected &&
         address &&
@@ -194,52 +193,54 @@ const Navbar = () => {
               </button>
             )}
 
-            {/* Changed condition to session check for immediate UI feedback */}
+            {/* --- UPDATED LOGIC HERE --- */}
             {session ? (
               <div className="flex gap-4 items-center justify-center">
-                {walletNotAvailable && pathName === "/" ? (
-                  <WalletConnectButton />
-                ) : (
+                {/* 1. Show Dashboard Buttons */}
+                {!pathName.includes("/authors/" + user?.wallet) && (
                   <>
-                    {!pathName.includes("/authors/" + user?.wallet) && (
-                      <>
-                        {user?.contractAdd === "" ? (
-                          <button
-                            onClick={() => router.push("/makeCollection")}
-                            className="bg-[#000000] hover:-translate-y-1 duration-200 rounded-lg text-[#eeeeee] h-10 font-semibold flex items-center justify-center gap-2 px-5 w-36 my-4 max-md:mx-auto"
-                          >
-                            Start <FaPenNib className="text-xl" />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => router.push(`/authors`)}
-                            className="bg-[#000000] hover:-translate-y-1 duration-200 rounded-lg text-[#eeeeee] h-10 font-semibold flex items-center justify-center gap-2 px-5 w-36 my-4 max-md:mx-auto"
-                          >
-                            Author <MdOutlineDashboard className="text-xl" />
-                          </button>
-                        )}
-                      </>
-                    )}
-
-                    {pathName?.split("/")[1] === "yourShelf" ? (
+                    {user?.contractAdd === "" ? (
                       <button
-                        disabled
-                        className="bg-gray-200 rounded-lg text-[#000000] cursor-not-allowed opacity-60 h-10 font-semibold flex items-center justify-center gap-2 px-5 w-48 my-4 max-md:mx-auto"
+                        onClick={() => router.push("/makeCollection")}
+                        className="bg-[#000000] hover:-translate-y-1 duration-200 rounded-lg text-[#eeeeee] h-10 font-semibold flex items-center justify-center gap-2 px-5 w-36 my-4 max-md:mx-auto"
                       >
-                        {user?.username?.slice(0, 12)}
+                        Start <FaPenNib className="text-xl" />
                       </button>
                     ) : (
                       <button
-                        onClick={() => router.push("/yourShelf")}
-                        className="bg-gray-200 rounded-lg text-[#000000] hover:-translate-y-1 duration-200 h-10 font-semibold flex items-center justify-center gap-2 px-5 w-36 my-4 max-md:mx-auto"
+                        onClick={() => router.push(`/authors`)}
+                        className="bg-[#000000] hover:-translate-y-1 duration-200 rounded-lg text-[#eeeeee] h-10 font-semibold flex items-center justify-center gap-2 px-5 w-36 my-4 max-md:mx-auto"
                       >
-                        Reader <MdOutlineDashboard className="text-xl" />
+                        Author <MdOutlineDashboard className="text-xl" />
                       </button>
                     )}
                   </>
                 )}
+
+                {pathName?.split("/")[1] === "yourShelf" ? (
+                  <button
+                    disabled
+                    className="bg-gray-200 rounded-lg text-[#000000] cursor-not-allowed opacity-60 h-10 font-semibold flex items-center justify-center gap-2 px-5 w-48 my-4 max-md:mx-auto"
+                  >
+                    {user?.username?.slice(0, 12)}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => router.push("/yourShelf")}
+                    className="bg-gray-200 rounded-lg text-[#000000] hover:-translate-y-1 duration-200 h-10 font-semibold flex items-center justify-center gap-2 px-5 w-36 my-4 max-md:mx-auto"
+                  >
+                    Reader <MdOutlineDashboard className="text-xl" />
+                  </button>
+                )}
+
+                {/* 2. Show Wallet Button ALWAYS when logged in */}
+                {/* This makes the connect/disconnect button visible alongside the dashboard buttons */}
+                <div className="scale-90">
+                  <WalletConnectButton />
+                </div>
               </div>
             ) : (
+              // If no session, just show the register/connect button
               <WalletConnectRegister />
             )}
 
@@ -408,6 +409,11 @@ const Navbar = () => {
                   Author Dashboard
                 </li>
               )}
+              {/* Added Wallet button to mobile menu for consistency */}
+              <li className="flex justify-center border-b-[1px] border-gray-300 py-2">
+                <WalletConnectButton />
+              </li>
+
               <li className="border-b-[1px] border-gray-300">
                 <button
                   disabled={isSigningOut}
