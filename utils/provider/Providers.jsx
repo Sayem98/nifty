@@ -50,14 +50,14 @@ const Rainbow = ({ children }) => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <SessionProvider>
-          <RainbowKitSiweNextAuthProvider
+          {/* <RainbowKitSiweNextAuthProvider
             getSiweMessageOptions={getSiweMessageOptions}
-          >
-            <RainbowKitProvider coolMode initialChain={base}>
-              <NetworkWatcher />
-              {children}
-            </RainbowKitProvider>
-          </RainbowKitSiweNextAuthProvider>
+          > */}
+          <RainbowKitProvider coolMode initialChain={base}>
+            <NetworkWatcher />
+            {children}
+          </RainbowKitProvider>
+          {/* </RainbowKitSiweNextAuthProvider> */}
         </SessionProvider>
       </QueryClientProvider>
     </WagmiProvider>
