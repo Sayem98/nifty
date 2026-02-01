@@ -26,8 +26,8 @@ type GlobalContextType = {
   fetch: boolean | false;
   setFetch: Dispatch<SetStateAction<boolean | false>>;
   getUser: () => void;
-  ensNameFetcher: () => boolean;
-  ensImageFetcher: () => boolean;
+  ensNameFetcher: () => Promise<boolean | undefined>;
+  ensImageFetcher: () => Promise<boolean | undefined>;
   ensImg: string | "";
   setEnsImg: Dispatch<SetStateAction<string | "">>;
   userRaw: UserType | null;
@@ -48,8 +48,8 @@ const GlobalContext = createContext<GlobalContextType>({
   fetch: false,
   setFetch: () => {},
   getUser: () => {},
-  ensImageFetcher: () => false,
-  ensNameFetcher: () => false,
+  ensImageFetcher: async () => false,
+  ensNameFetcher: async () => false,
   ensImg: "",
   setEnsImg: () => {},
   userRaw: null,
