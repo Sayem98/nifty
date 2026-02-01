@@ -9,6 +9,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 
 import { RainbowKitSiweNextAuthProvider } from "@rainbow-me/rainbowkit-siwe-next-auth";
+import { GlobalContextProvider } from "@/context/MainContext";
 
 const getSiweMessageOptions = () => ({
   statement: "Sign in to Nifty Tales",
@@ -55,7 +56,7 @@ const Rainbow = ({ children }) => {
           > */}
           <RainbowKitProvider coolMode initialChain={base}>
             <NetworkWatcher />
-            {children}
+            <GlobalContextProvider>{children}</GlobalContextProvider>
           </RainbowKitProvider>
           {/* </RainbowKitSiweNextAuthProvider> */}
         </SessionProvider>
