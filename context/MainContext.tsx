@@ -88,7 +88,7 @@ export const GlobalContextProvider = ({
   const [user, setUser] = useState<UserType | null>(null);
 
   const config = {
-    apiKey: "2L082LzB4Kl82BLjvBpMBgEnz3eTuq1v", // Replace with your Alchemy API key
+    apiKey: "oYg7cbsclPh-hZzm6vYXq",
     network: Network.ETH_MAINNET,
   };
   const alchemy = new Alchemy(config);
@@ -99,7 +99,7 @@ export const GlobalContextProvider = ({
       if (user && address && session?.role != "ANONYMOUS") {
         //@ts-ignore
         const provider = new ethers.getDefaultProvider(
-          "https://eth-mainnet.g.alchemy.com/v2/2L082LzB4Kl82BLjvBpMBgEnz3eTuq1v",
+          "https://eth-mainnet.g.alchemy.com/v2/oYg7cbsclPh-hZzm6vYXq",
         );
         const ensName = await provider.lookupAddress(address);
         if (!ensName) {
@@ -152,7 +152,7 @@ export const GlobalContextProvider = ({
       if (user && address && session?.role != "ANONYMOUS") {
         //@ts-ignore
         const provider = new ethers.getDefaultProvider(
-          "https://eth-mainnet.g.alchemy.com/v2/2L082LzB4Kl82BLjvBpMBgEnz3eTuq1v",
+          "https://eth-mainnet.g.alchemy.com/v2/oYg7cbsclPh-hZzm6vYXq",
         );
         const ensName = await provider.lookupAddress(address);
 
