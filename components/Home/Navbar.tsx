@@ -64,6 +64,8 @@ const Navbar = () => {
     }
   }, [session, user, getUser]);
 
+  // console.log("Navbar session:", session);
+
   const handleLogout = async () => {
     if (isSigningOut) return;
     try {
